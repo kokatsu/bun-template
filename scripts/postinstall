@@ -19,6 +19,9 @@ const readme = `\
 // Write README.md
 await $`echo ${readme} > README.md`;
 
+// Remove LICENSE
+await $`rm LICENSE`;
+
 // Remove this script
 await $`rm scripts/postinstall`;
 // If scripts folder is empty, remove it
