@@ -6,7 +6,8 @@ import { $ } from 'bun';
 
 // Get project name
 const { dirname } = import.meta;
-const project = basename(resolve(dirname, '..'));
+const projectPath = resolve(dirname, '..')
+const project = basename(projectPath);
 
 // Create README.md content
 const readme = `\
@@ -17,18 +18,24 @@ const readme = `\
 `;
 
 // Write README.md
-await $`echo ${readme} > README.md`;
+const readmeFile = Bun.file(`${projectPath}/README.md`);
+await readmeFile.write(readme);
 
 // Remove LICENSE
-await $`rm LICENSE`;
+const licenseFile = Bun.file(`${projectPath}/LICENSE`);
+await licenseFile.delete();
+
 // Remove license field from package.json
-const packageJson = Bun.file('package.json');
+const packageJson = Bun.file(`${projectPath}/package.json`);
 const contents = await packageJson.json();
 contents.license = undefined;
 await Bun.write(packageJson, `${JSON.stringify(contents, null, 2)}\n`);
 
 // Remove this script
-await $`rm scripts/postinstall`;
+// await $`rm scripts/postinstall`;
+const postinstallFile = Bun.file(`${projectPath}/scripts/postinstall`);
+await postinstallFile.delete();
+
 // If scripts folder is empty, remove it
 const files = await readdir(dirname);
 if (!files.length) {
